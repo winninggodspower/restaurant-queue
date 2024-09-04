@@ -1,26 +1,99 @@
 ---
+import Layout from "../layouts/Layout.astro";
 import { supabase } from "../lib/supabase";
 
 // fetche menu items
 
-  const { data, error } = await supabase.from('Order').select()
+async function fetchOrdersWithTotalPrice() {
+  const { data, error } = await supabase
+    .from("Order")
+    .select(
+      `
+      id,
+      user_id,
+      order_date,
+      CartItem (
+        id,
+        menu_item_id,
+        menuitem:menu_item_id (price, name)
+      )
+    `,
+    )
+    .order("id");
 
+  if (error) {
+    console.error("Error fetching orders:", error);
+    return [];
+  }
 
-console.log(data);
-console.log(error);
+  const ordersWithTotalPrice = data.map((order) => {
+    console.log(order.CartItem);
+    
+    const totalPrice = order.CartItem.reduce((sum, item) => {
+      return sum + item.menuitem.price;
+    }, 0);
+
+    const getOrderedItemNames = order.CartItem.reduce((names, item)=> {
+      return '' ? names : item.menuitem.name + ', ' + names;
+    }, '');
+
+    console.log(getOrderedItemNames);
+    
+    // const totalPrice = 4;
+    return {
+      order_id: order.id,
+      user_id: order.user_id,
+      order_data: new Date(order.order_date).toLocaleTimeString(),
+      total_price: totalPrice,
+      item_names: getOrderedItemNames,
+    };
+  });
+
+  return ordersWithTotalPrice;
+}
+let orders = await fetchOrdersWithTotalPrice();
+console.log(orders);
 ---
 
-<div class="max-w-3xl mx-auto ">
+<Layout title="Order Queue">
+  <div class="max-w-3xl mx-auto">
     <div class="my-4 mx-4">
       <p>orders being queued for delivery</p>
     </div>
     <h1 class="text-3xl mb-2 font-serif mx-4">Todays Queue</h1>
     <div class="">
-        <div class="flex  rounded-md shadow-sm p-4">
-            {data.map((item)=>{
-                <div>{item.user_id}</div>
-            })
-            }  
+      <div class="flex rounded-md shadow-sm p-4">
+        <div class="relative overflow-x-auto !w-full">
+          <table class="w-full text-sm text-left rtl:text-right text-gray-500">
+            <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+              <tr>
+                <th scope="col" class="px-6 py-3"> Order Date </th>
+                <th scope="col" class="px-6 py-3"> Items </th>
+                <th scope="col" class="px-6 py-3"> Price </th>
+              </tr>
+            </thead>
+            <tbody>
+              {
+                orders.map((order) => {
+                  return (
+                    <tr class="bg-white border-b ">
+                      <th
+                        scope="row"
+                        class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap "
+                      >
+                        {order.order_data}
+                      </th>
+                      <td class="px-6 py-4"> {order.item_names} </td>
+                      {/* <td class="px-6 py-4"> Laptop </td> */}
+                      <td class="px-6 py-4"> {order.total_price} </td>
+                    </tr>
+                  );
+                })
+              }
+            </tbody>
+          </table>
         </div>
+      </div>
     </div>
   </div>
+</Layout>
