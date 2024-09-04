@@ -1,0 +1,27 @@
+---
+import Layout from "../layouts/Layout.astro";
+import CheckoutComponent from "../react_components/CheckoutComponent";
+
+const { redirect } = Astro;
+const user = Astro.locals?.user;
+
+// redirect user to signin if not authenticated
+if (!user) {
+  return redirect("/signin");
+}
+
+---
+
+<Layout title="Checkout">
+    <div class="max-w-3xl mx-auto">
+        <div class="bg-white shadow-md rounded-lg p-6">
+            <h1 class="text-3xl mb-4 font-serif ">Order Summary</h1>
+            <CheckoutComponent client:only="react" />
+        </div>
+    </div>
+
+    <script>
+
+    </script>
+</Layout>
+
