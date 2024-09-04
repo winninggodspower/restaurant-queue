@@ -1,0 +1,32 @@
+---
+import Notification from "../react_components/Notification";
+import { Image } from "astro:assets";
+import dishImage from "../assets/dish.png";
+
+const user = Astro.locals?.user;
+---
+
+<nav
+    class="mx-4">
+    <div class="flex flex-wrap items-center justify-between max-w-3xl px-4 py-1 mx-auto my-5 bg-white shadow-lg shadow-red-200 md:px-6 md:h-14 rounded-3xl">
+        <a class="flex items-center gap-2 space-x-3 rtl:space-x-reverse" href="/">
+            <Image src={dishImage} alt="dish image" width={24} />
+            <span class="sr-only">Acme Inc</span>
+        </a>
+    
+        <div class="md:w-auto" id="navbar-default">
+            {
+                !user ? (
+                    <a
+                        href="/signin"
+                        class="flex items-center justify-center gap-2 px-3 text-sm font-medium transition-colors border whitespace-nowrap ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border-input bg-background hover:bg-accent hover:text-accent-foreground h-9 rounded-3xl"
+                    >
+                        <span>Login</span>
+                    </a>
+                ) : (
+                    <Notification client:only="react" />
+                )
+            }
+        </div>    
+    </div>
+</nav>
