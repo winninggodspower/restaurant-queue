@@ -3,6 +3,8 @@ import QueuePopup from './QueuePopup';
 
 function CheckoutComponent() {
     const [showPopup, setShowPopup] = useState(false);
+    const [orderType, setOrderType] = useState('');
+
     // get cart items
     const storedCart = JSON.parse(window.localStorage.getItem('cart')) || [];
     const totalPrice = storedCart.reduce((accumulator, currentValue) => accumulator + currentValue.price, 0)
@@ -31,7 +33,7 @@ function CheckoutComponent() {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({menu_items: storedCart})
+                body: JSON.stringify({menu_items: storedCart, order_type: orderType})
             })
     
             if (!response.ok) {
@@ -66,11 +68,34 @@ function CheckoutComponent() {
                 )
             })}
 
+            <div className="mt-4">
+                <h3 className="mb-2">Order Type</h3>
+                <div className="flex items-center space-x-4">
+                    <label className="flex items-center space-x-2">
+                        <input type="radio" name="orderType" value="table" checked={orderType === 'table'}
+                            onChange={(e) => setOrderType(e.target.value)}
+                            className="form-radio"
+                        />
+                        <span>Table Reservation</span>
+                    </label>
+                    <label className="flex items-center space-x-2">
+                        <input type="radio" name="orderType" value="delivery" checked={orderType === 'delivery'}
+                            onChange={(e) => setOrderType(e.target.value)}
+                            className="form-radio"
+                        />
+                        <span>Delivery</span>
+                    </label>
+                </div>
+            </div>
+
             <hr className="py-2" />
             <div className="flex justify-between items-center">
                 <p className="font-medium">Subtotal</p>
                 <p className="font-medium">₦{totalPrice.toLocaleString("en-US")}</p>
-            </div><div className="mt-3">
+            </div>
+
+
+            <div className="mt-3">
                 <button onClick={placeOrder} className='btn'>order</button>
             </div>
             {showPopup && <QueuePopup />}

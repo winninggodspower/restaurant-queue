@@ -19,6 +19,7 @@ async function fetchOrdersWithTotalPrice() {
       )
     `,
     )
+    .eq('is_completed', false)
     .order("id");
 
   if (error) {

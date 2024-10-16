@@ -19,6 +19,7 @@ export const POST = async ({ request, redirect, cookies }) => {
   if (request.headers.get("Content-Type") === "application/json") {
     const body = await request.json();
     const menuItems = body.menu_items;
+    const order_type = body.order_type;
 
     try {
       // createOrder

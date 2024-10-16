@@ -1,0 +1,81 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { completeOrder } from "../lib/complete-order";
+import { fetchOrdersWithTotalPrice } from "./utils";
+
+const { redirect, request } = Astro;
+const user = Astro.locals?.user;
+
+// redirect user to signin if not authenticated
+if (!user) {
+  return redirect("/signin");
+}
+
+// redirect user if not admin
+if (!user.profile.is_admin) {
+    return redirect("/");
+}
+
+let orders: Array<any>;
+if (request.method === 'POST') {
+    const formData = await request.formData();
+    const orderId = formData.get('orderId');
+    
+    try {
+        await completeOrder(orderId);
+        // Refresh orders after completion
+        orders = await fetchOrdersWithTotalPrice();
+    } catch (error) {
+        console.error('Error completing order:', error);
+    }
+} else {
+    orders = await fetchOrdersWithTotalPrice()
+}
+
+
+---
+<Layout title="admin">
+    <div class="max-w-3xl mx-auto px-4 py-8">
+      <h1 class="text-3xl font-bold mb-6">Queue Management Dashboard</h1>
+      <div class="bg-white shadow-md rounded-lg overflow-hidden">
+          <table class="min-w-full divide-y divide-gray-200">
+              <thead class="bg-gray-50">
+                  <tr>
+                      <th >Order ID</th>
+                      <th >Items</th>
+                      <th >Total Price</th>
+                      <th >Status</th>
+                      <th >Action</th>
+                  </tr>
+              </thead>
+              <tbody class="bg-white divide-y divide-gray-200" id="orderTableBody">
+                  {orders.map((order) => (
+                      <tr>
+                          <td class="font-medium text-gray-900">{order.order_id}</td>
+                          <td class="">{order.item_names}</td>
+                          <td class="">${order.total_price.toFixed(2)}</td>
+                          <td class="">
+                              <span class={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${order.is_completed === false ? 'bg-yellow-100 text-yellow-800' : 'bg-green-100 text-green-800'}`}>
+                                  {order.is_completed ? 'completed' : 'pending'}
+                              </span>
+                          </td>
+                          <td class=" font-medium">
+                            <form method="POST">
+                                  <input type="hidden" name="orderId" value={order.order_id} />
+                                  <button 
+                                      type="submit"
+                                      class="complete-order bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline disabled:opacity-50 disabled:cursor-not-allowed"
+                                      disabled={order.is_completed}
+                                  >
+                                      {order.is_completed ? 'Completed' : 'Complete Order'}
+                                  </button>
+                              </form>
+                          </td>
+                      </tr>
+                  ))}
+              </tbody>
+          </table>
+      </div>
+  </div>
+
+</Layout>

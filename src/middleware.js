@@ -10,12 +10,12 @@ async function auth ({locals, cookies, redirect}, next) {
       return next();
     }
     
-    const { data, error } = await supabase.auth.setSession({
+    const { data: sessionData, error: sessionError } = await supabase.auth.setSession({
       refresh_token: refreshToken.value,
       access_token: accessToken.value,
     });
     
-    if (error) {
+    if (sessionError) {
       cookies.delete("sb-access-token", {
         path: "/",
       });
@@ -24,8 +24,26 @@ async function auth ({locals, cookies, redirect}, next) {
       });
 
       locals.user = null
+
     } else {
-      locals.user = data.user;
+      const user = sessionData.user;
+
+      // Fetch the profile data for the authenticated user
+      const { data: profileData, error: profileError } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('user_id', user.id)
+        .single();
+
+        if (profileError) {
+          locals.user = user;
+        } else {
+          // Combine user and profile data into the locals.user object
+          locals.user = {
+            ...user,
+            profile: profileData
+          };
+        }
     }
 
   // return a Response or the result of calling `next()`

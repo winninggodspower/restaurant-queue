@@ -4,7 +4,7 @@ import Layout from "../layouts/Layout.astro";
 
 <Layout title="SignIn">
 
-    <div class="flex items-center justify-center h-screen bg-background">
+    <div class="flex items-center justify-center h-[calc(100vh-60px)] bg-background">
         <div class="w-full max-w-md p-6 bg-card rounded-lg shadow-xl">
             <h1 class="text-3xl font-bold mb-6 text-center">SigIn</h1>
             <form action="/api/auth/signin" method="post" id="SigninForm" class="space-y-4">
@@ -38,6 +38,7 @@ import Layout from "../layouts/Layout.astro";
                 >
                     Signin
                 </button>
+                <p>don't have an account <a href="/register">register</a> </p>
             </form>
         </div>
     </div>

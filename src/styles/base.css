@@ -7,6 +7,14 @@
     label{
         @apply text-sm mb-2 font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70;
     }
+
+    th{
+        @apply px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider;
+    }
+
+    td{
+        @apply px-6 py-4 whitespace-nowrap text-sm text-gray-500;
+    }
 }
 
 @layer components{
