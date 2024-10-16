@@ -72,7 +72,7 @@ function CheckoutComponent() {
                 <h3 className="mb-2">Order Type</h3>
                 <div className="flex items-center space-x-4">
                     <label className="flex items-center space-x-2">
-                        <input type="radio" name="orderType" value="table" checked={orderType === 'table'}
+                        <input type="radio" name="orderType" value="reservation" checked={orderType === 'reversation'}
                             onChange={(e) => setOrderType(e.target.value)}
                             className="form-radio"
                         />

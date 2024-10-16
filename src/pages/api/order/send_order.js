@@ -23,7 +23,7 @@ export const POST = async ({ request, redirect, cookies }) => {
 
     try {
       // createOrder
-      let order = await createOrder(data.user.id);      
+      let order = await createOrder(data.user.id, order_type);      
 
       // create order item
       await addOrderItems(menuItems, order[0].id)
@@ -41,10 +41,10 @@ export const POST = async ({ request, redirect, cookies }) => {
 };
 
 
-async function createOrder(user_id) {
+async function createOrder(user_id, order_type) {
   const { data, error } = await supabase
   .from('Order')
-  .insert({user_id: user_id})
+  .insert({user_id: user_id, order_type: order_type})
   .select()
 
   if (error) throw error;

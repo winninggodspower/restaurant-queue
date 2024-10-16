@@ -7,6 +7,7 @@ export async function fetchOrdersWithTotalPrice() {
         `
         id,
         user_id,
+        order_type,
         order_date,
         is_completed,
         CartItem (
@@ -38,6 +39,7 @@ export async function fetchOrdersWithTotalPrice() {
         order_id: order.id,
         is_completed: order.is_completed,
         user_id: order.user_id,
+        order_type: order.order_type,
         order_data: new Date(order.order_date).toLocaleTimeString(),
         total_price: totalPrice,
         item_names: itemNames,
