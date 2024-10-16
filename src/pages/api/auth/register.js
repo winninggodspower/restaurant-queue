@@ -16,8 +16,13 @@ export const POST = async ({ request, redirect }) => {
 
   // Sign up user
   const { data: auth_data, error: auth_error } = await supabase.auth.signUp({
+    email,
     password,
   });
+
+  if (auth_error) {
+    return new Response(auth_error.message, { status: 500 });
+  }
 
   // Insert user profile
   const { data: profile_data, error: profile_error } = await supabase
