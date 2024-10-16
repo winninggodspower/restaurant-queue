@@ -50,7 +50,7 @@ let orders = await fetchOrdersWithTotalPrice()
                       <tr>
                           <td class="font-medium text-gray-900">{order.order_id}</td>
                           <td class="">{order.item_names}</td>
-                          <td class="">${order.total_price.toFixed(2)}</td>
+                          <td class="">₦{order.total_price.toFixed(2)}</td>
                           <td class="">{order.order_type}</td>
                           <td class="">
                               <span class={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${order.is_completed === false ? 'bg-yellow-100 text-yellow-800' : 'bg-green-100 text-green-800'}`}>
