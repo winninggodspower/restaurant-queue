@@ -18,7 +18,6 @@ export const POST = async ({ request, redirect }) => {
   const { data: auth_data, error: auth_error } = await supabase.auth.signUp({
     password,
   });
-  }
 
   // Insert user profile
   const { data: profile_data, error: profile_error } = await supabase
